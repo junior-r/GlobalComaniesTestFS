@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 import { Post } from "../types/post"
 import CardPost from "./components/posts/Card"
+import { Button } from "./components/ui/button"
 
 
 function App() {
@@ -22,6 +23,18 @@ function App() {
 
     getPosts()
   }, [])
+
+  const registerData = async () => {
+    const res = await fetch("http://127.0.0.1:8000/api/posts/register", {
+      method: "OPTIONS",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    if (!res.ok) throw new Error("Error al obtener los posts")
+    const data = await res.json()
+    window.location.reload()
+  }
 
   const filteredPosts = posts.filter(post =>
     post.text.toLowerCase().includes(search.toLowerCase())
@@ -48,7 +61,10 @@ function App() {
               <CardPost key={post.id} post={post} />
             ))
           ) : (
-            <p className="text-gray-500">No posts found</p>
+            <>
+              <p className="text-gray-500">No posts found</p>
+              <Button onClick={registerData}>Register Data</Button>
+            </>
           )}
         </section>
       </div>
