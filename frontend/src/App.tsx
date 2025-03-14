@@ -32,7 +32,6 @@ function App() {
       }
     })
     if (!res.ok) throw new Error("Error al obtener los posts")
-    const data = await res.json()
     window.location.reload()
   }
 
