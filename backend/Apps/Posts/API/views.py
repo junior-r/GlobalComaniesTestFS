@@ -12,9 +12,12 @@ from Apps.Posts.serializers import PostSerializer
 
 class PostsListAPIView(ListAPIView):
     model = Post
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Post.objects.all().order_by("-createdAt")
+        return queryset
 
 
 class PostDetailAPIView(RetrieveAPIView):
@@ -31,8 +34,18 @@ class PostCreateAPIView(APIView):
         try:
             with open("data.json", "r", encoding="utf-8") as file:
                 data = json.load(file)
+                posts = []
                 for post in data.get("data"):
-                    Post.objects.create(author=post.get("username"), text=post.get("text"), likes=post.get("likes"), comments=post.get("comments"), shares=post.get("shares"), createdAt=post.get("created_at"))
+                    new_post = Post(
+                        author=post.get("username"),
+                        text=post.get("text"),
+                        likes=post.get("likes"),
+                        comments=post.get("comments"),
+                        shares=post.get("shares"),
+                        createdAt=post.get("created_at")
+                    )
+                    posts.append(new_post)
+                Post.objects.bulk_create(posts)
         except json.JSONDecodeError as e:
             return JsonResponse({"error": f"Error al leer el JSON: {str(e)}"}, status=400)
         except FileNotFoundError:
@@ -41,4 +54,3 @@ class PostCreateAPIView(APIView):
             return JsonResponse({"error": str(e)}, status=500)
 
         return super().dispatch(request, *args, **kwargs)
-
