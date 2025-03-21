@@ -1,14 +1,19 @@
-import { Post } from "types/post";
+import { PostsResponse } from "types/api/posts";
 import { create } from "zustand";
 
 type State = {
-  posts: Post[];
-  setPosts: (posts: Post[]) => void;
+  data: PostsResponse;
+  setPostsData: (data: PostsResponse) => void;
 };
 
 export const usePostsStore = create<State>((set) => {
   return {
-    posts: [],
-    setPosts: (posts: Post[]) => set({ posts }),
+    data: {
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    },
+    setPostsData: (data: PostsResponse) => set({ data }),
   };
 });

@@ -5,27 +5,24 @@ import { Button } from "./components/ui/button";
 import { getPosts, registerData } from "./lib/actions";
 import { usePaginationStore } from "./store/Posts/pagination";
 import { usePostsStore } from "./store/Posts/posts";
-import { PostsResponse } from "../types/api/posts";
 import Pagination from "./components/posts/Pagination";
 
 function App() {
-  const posts = usePostsStore((state) => state.posts);
-  const setPosts = usePostsStore((state) => state.setPosts);
+  const postsResponse = usePostsStore((state) => state.data);
+  const setPostsResponse = usePostsStore((state) => state.setPostsData);
   const page = usePaginationStore((state) => state.page);
 
   const [search, setSearch] = useState("");
-  const [apiResponse, setApiResponse] = useState<PostsResponse | null>(null);
 
   const apiListUrl = import.meta.env.VITE_API_BASE_URL as string;
 
   useEffect(() => {
     getPosts(page || apiListUrl).then((data) => {
-      setPosts(data.results);
-      setApiResponse(data);
+      setPostsResponse(data);
     });
-  }, [apiListUrl, page, setPosts]);
+  }, [apiListUrl, page, setPostsResponse]);
 
-  const filteredPosts = posts.filter((post) =>
+  const filteredPosts = postsResponse.results.filter((post) =>
     post.text.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -33,7 +30,9 @@ function App() {
     <>
       <div className="min-h-screen max-w-7xl mx-auto">
         <header className="bg-gray-800 text-white p-4">
-          <h1 className="text-2xl font-bold">Posts ({posts.length})</h1>
+          <h1 className="text-2xl font-bold">
+            Posts ({postsResponse.results.length})
+          </h1>
         </header>
         <section className="p-4">
           <form onSubmit={(e) => e.preventDefault()}>
@@ -44,7 +43,7 @@ function App() {
             />
           </form>
         </section>
-        {apiResponse && <Pagination apiResponse={apiResponse} />}
+        {postsResponse && <Pagination apiResponse={postsResponse} />}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post) => <CardPost key={post.id} post={post} />)
@@ -55,7 +54,7 @@ function App() {
             </>
           )}
         </section>
-        {apiResponse && <Pagination apiResponse={apiResponse} />}
+        {postsResponse && <Pagination apiResponse={postsResponse} />}
       </div>
     </>
   );
