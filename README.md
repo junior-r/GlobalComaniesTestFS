@@ -51,7 +51,9 @@ Se compone de un backend desarrollado con Django y Django REST Framework, un fro
    - Devuelve un listado de publicaciones en formato JSON.
 3. **GET /api/posts/?search={query}**
    - Filtra los posts por **texto** y **autor**
-4. **GET /api/posts/{id}**
+4. **GET /api/posts/?page={number}**
+   - Devuelve una colección paginada de posts correspondientes al número de página proporcionado.
+5. **GET /api/posts/{id}**
    - Devuelve los detalles de una publicación específica.
 
 ## Instalación y Ejecución
