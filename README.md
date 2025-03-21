@@ -45,11 +45,13 @@ Se compone de un backend desarrollado con Django y Django REST Framework, un fro
 
 ## Endpoints del Backend
 
-1. **GET /api/posts/register**
+1. **OPTIONS /api/posts/register**
    - Registrar los datos en la base de datos.
 2. **GET /api/posts**
    - Devuelve un listado de publicaciones en formato JSON.
-3. **GET /api/posts/{id}**
+3. **GET /api/posts/?search={query}**
+   - Filtra los posts por **texto** y **autor**
+4. **GET /api/posts/{id}**
    - Devuelve los detalles de una publicación específica.
 
 ## Instalación y Ejecución
