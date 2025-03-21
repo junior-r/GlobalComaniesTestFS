@@ -13,6 +13,8 @@ export const usePostsStore = create<State>((set) => {
       next: null,
       previous: null,
       results: [],
+      current_page: 0,
+      total_pages: 0,
     },
     setPostsData: (data: PostsResponse) => set({ data }),
   };

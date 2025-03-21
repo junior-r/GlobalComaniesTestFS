@@ -1,12 +1,13 @@
+import json
+
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
-import json
-import os
-import django
 from rest_framework.views import APIView
 
 from Apps.Posts.models import Post
+from Apps.Posts.pagination import CustomPageNumberPagination
 from Apps.Posts.serializers import PostSerializer
 
 
@@ -14,10 +15,17 @@ class PostsListAPIView(ListAPIView):
     model = Post
     serializer_class = PostSerializer
     permission_classes = [AllowAny]
+    pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
-        queryset = Post.objects.all().order_by("-createdAt")
-        return queryset
+        queryset = Post.objects.all()
+        query = self.request.GET.get("search", None)
+        if query:
+            queryset = queryset.filter(
+                Q(text__icontains=query) |
+                Q(author__icontains=query)
+            )
+        return queryset.order_by("-createdAt")
 
 
 class PostDetailAPIView(RetrieveAPIView):

@@ -15,7 +15,6 @@ function PostDetail() {
   const navigate = useNavigate();
   const [post, setPost] = useState<Post | undefined>(undefined);
   const { id } = useParams() as { id: string };
-  console.log(id);
 
   useEffect(() => {
     getPost(id)

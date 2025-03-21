@@ -1,30 +1,24 @@
-import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CardPost from "./components/posts/Card";
 import { Button } from "./components/ui/button";
 import { getPosts, registerData } from "./lib/actions";
 import { usePaginationStore } from "./store/Posts/pagination";
 import { usePostsStore } from "./store/Posts/posts";
 import Pagination from "./components/posts/Pagination";
+import Search from "./components/posts/Search";
+
+const apiListUrl = import.meta.env.VITE_API_BASE_URL as string;
 
 function App() {
   const postsResponse = usePostsStore((state) => state.data);
-  const setPostsResponse = usePostsStore((state) => state.setPostsData);
   const page = usePaginationStore((state) => state.page);
-
-  const [search, setSearch] = useState("");
-
-  const apiListUrl = import.meta.env.VITE_API_BASE_URL as string;
+  const setPostsResponse = usePostsStore((state) => state.setPostsData);
 
   useEffect(() => {
     getPosts(page || apiListUrl).then((data) => {
       setPostsResponse(data);
     });
-  }, [apiListUrl, page, setPostsResponse]);
-
-  const filteredPosts = postsResponse.results.filter((post) =>
-    post.text.toLowerCase().includes(search.toLowerCase())
-  );
+  }, [page, setPostsResponse]);
 
   return (
     <>
@@ -34,19 +28,13 @@ function App() {
             Posts ({postsResponse.results.length})
           </h1>
         </header>
-        <section className="p-4">
-          <form onSubmit={(e) => e.preventDefault()}>
-            <Input
-              placeholder="Search by content"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </form>
-        </section>
+        <Search />
         {postsResponse && <Pagination apiResponse={postsResponse} />}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-          {filteredPosts.length > 0 ? (
-            filteredPosts.map((post) => <CardPost key={post.id} post={post} />)
+          {postsResponse.results.length > 0 ? (
+            postsResponse.results.map((post) => (
+              <CardPost key={post.id} post={post} />
+            ))
           ) : (
             <>
               <p className="text-gray-500">No posts found</p>

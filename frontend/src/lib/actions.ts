@@ -1,4 +1,4 @@
-import { PostsResponse } from "../../types/api/posts";
+import { PostsResponse } from "@/types/api/posts";
 
 const API_URL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -26,6 +26,8 @@ export const getPosts = async (url: string) => {
       next: null,
       previous: null,
       results: [],
+      current_page: 0,
+      total_pages: 0,
     };
   }
 };
